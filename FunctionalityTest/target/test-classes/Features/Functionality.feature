@@ -1,9 +1,6 @@
 #Author: Yeshwanth Neelam
-#@tag
-Feature: Multiple Drop Downdown Application (Positive Scenario) -KFC(101) 
-	
- # @For requesting access
-  Scenario: To validate complete flow of Requesting access for Multiple Drop Down Application along with Approval and Deletion. 
+Feature: Testing the functionality of Demo Web Shop 
+Scenario: To validate complete flow of Requesting access for Multiple Drop Down Application along with Approval and Deletion. 
   	
   	Given Login in to demowebshop with "valid" user
   	Then Clear cart and shop for books and add quantity more than 1
