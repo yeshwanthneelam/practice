@@ -25,6 +25,7 @@ public class TotalApplication {
 	public static Properties config = null;
 	public static WebDriver driver = null;
 	String bookName;
+	
 
 	@Given("Login in to demowebshop with {string} user")
 	public void login_in_to_demowebshop_with_user(String arg) throws IOException, InterruptedException 
@@ -79,9 +80,10 @@ public class TotalApplication {
 	{
 		
 		//Checking the cart and making sure the cart is empty if not make it empty
-		WebDriverWait wait=new WebDriverWait(driver, 20);
+		//WebDriverWait wait=new WebDriverWait(driver, 20);
 		Thread.sleep(10000);
 		driver.findElement(By.xpath("//*[@id='topcartlink']")).click();
+		WebDriverWait wait=new WebDriverWait(driver, 20);
 		String cartStatus = driver.findElement(By.xpath("//*[@class='page-body']")).getText();
 		if (cartStatus.equals("Your Shopping Cart is empty!"))
 		{
@@ -96,18 +98,20 @@ public class TotalApplication {
 				System.out.println("In for loop for deleting all items in cart");
 				driver.findElement(By.xpath("(//*[@name='removefromcart'])["+i+"]")).click();
 			}
+			wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//*[@name='updatecart'])")));
 			driver.findElement(By.xpath("(//*[@name='updatecart'])")).click();
 			System.out.println("Cleaning cart is done");
 		}
 		Thread.sleep(10000);
 		
-		//Adding a book to cart with quantity of 2 
+		//Adding a book to cart with quantity of more than 1 
 		driver.findElement(By.xpath("(//a[@href='/books'])[1]")).click();
 		bookName =driver.findElement(By.xpath("(//*[@class='product-title'])[1]")).getText();
 		driver.findElement(By.xpath("(//*[@class='product-title'])[1]")).click();
 		driver.findElement(By.xpath("(//*[@id='addtocart_13_EnteredQuantity'])")).clear();
+		Thread.sleep(2000);
 		driver.findElement(By.xpath("(//*[@id='addtocart_13_EnteredQuantity'])")).sendKeys("2");
-		Thread.sleep(5000);
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//*[@id='add-to-cart-button-13'])")));
 		driver.findElement(By.xpath("(//*[@id='add-to-cart-button-13'])")).click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//*[@class='bar-notification success'])")));
 		String productAddinToCartStatus = driver.findElement(By.xpath("(//*[@class='bar-notification success'])")).getText();
@@ -138,10 +142,13 @@ public class TotalApplication {
 			int i=Integer.valueOf(productUnitPrize.replace(".00", ""));  
 			int j=Integer.valueOf(numberOfItems.replace(".00", ""));
 			int k=Integer.valueOf(totalCost.replace(".00", ""));
+			WebDriverWait wait=new WebDriverWait(driver, 20);
 			if (k==i*j) 
 			{
 				System.out.println("Amount is exact");
+				wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='termsofservice']")));
 				driver.findElement(By.xpath("//*[@id='termsofservice']")).click();
+				wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='checkout']")));
 				driver.findElement(By.xpath("//*[@id='checkout']")).click();
 			} 
 			else 
@@ -167,9 +174,10 @@ public class TotalApplication {
 		driver.findElement(By.xpath("//*[@id='BillingNewAddress_ZipPostalCode']")).sendKeys("500018");
 		driver.findElement(By.xpath("//*[@id='BillingNewAddress_PhoneNumber']")).sendKeys("1234567890");
 		driver.findElement(By.xpath("(//*[@class='button-1 new-address-next-step-button'])[1]")).click();
+		WebDriverWait wait=new WebDriverWait(driver, 20);
 		
 		//Working on shipping address tab
-		Thread.sleep(5000);
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='shipping-address-select']")));
 		Select shippingAddress = new Select(driver.findElement(By.xpath("//*[@id='shipping-address-select']")));
 		List<WebElement> numberOfAdrreses = shippingAddress.getOptions();
 		int l = numberOfAdrreses.size();
@@ -178,17 +186,17 @@ public class TotalApplication {
 		driver.findElement(By.xpath("(//*[@class='button-1 new-address-next-step-button'])[2]")).click();
 		
 		//Shipping method
-		Thread.sleep(5000);
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//*[@id='shippingoption_1'])")));
 		driver.findElement(By.xpath("(//*[@id='shippingoption_1'])")).click();
 		driver.findElement(By.xpath("(//*[@class='button-1 shipping-method-next-step-button'])")).click();
 		
 		//selecting payment method
-		Thread.sleep(5000);
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//*[@id='paymentmethod_0'])")));
 		driver.findElement(By.xpath("(//*[@id='paymentmethod_0'])")).click();
 		driver.findElement(By.xpath("(//*[@class='button-1 payment-method-next-step-button'])")).click();
 		
 		//Validate the message for COD
-		Thread.sleep(5000);
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//*[@class='info'])")));
 		String CODmessage = driver.findElement(By.xpath("(//*[@class='info'])")).getText();
 		if (CODmessage.equals("You will pay by COD")) 
 		{
@@ -201,7 +209,7 @@ public class TotalApplication {
 		}
 		
 		//Confirming the order and validate the message
-		Thread.sleep(5000);
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//*[@class='button-1 confirm-order-next-step-button'])")));
 		driver.findElement(By.xpath("(//*[@class='button-1 confirm-order-next-step-button'])")).click();
 		String orderPlcedMessage = driver.findElement(By.xpath("(//*[@class='title'])")).getText();
 		if (orderPlcedMessage.equals("Your order has been successfully processed!")) 
